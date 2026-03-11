@@ -8,4 +8,4 @@ ENV TIMEOUT 300
 
 EXPOSE 8388
 
-CMD ["sh", "-c", "ss-server -s $SERVER_ADDR -p $SERVER_PORT -k $PASSWORD -m $METHOD -t $TIMEOUT"]
+CMD ["ss-server", "-s", "0.0.0.0", "-p", "8388", "-k", "yourpassword", "-m", "chacha20-ietf-poly1305", "-t", "300"]
