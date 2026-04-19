@@ -1,11 +1,25 @@
-FROM shadowsocks/shadowsocks-libev:latest
+FROM debian:bullseye-slim
 
-ENV SERVER_ADDR 0.0.0.0
-ENV SERVER_PORT 8388
-ENV PASSWORD yourpassword
-ENV METHOD chacha20-ietf-poly1305
-ENV TIMEOUT 300
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    unzip \
+    ca-certificates \
+    uuid-runtime \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8388
+# Install Xray
+RUN bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install
 
-CMD ["ss-server", "-s", "0.0.0.0", "-p", "8388", "-k", "yourpassword", "-m", "chacha20-ietf-poly1305", "-t", "300"]
+# Create config directory
+RUN mkdir -p /etc/xray /var/log/xray
+
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 8080
+
+CMD ["/start.sh"]
